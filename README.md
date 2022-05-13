@@ -1,4 +1,4 @@
 # SMU
 # Jogo escolhido : LabirintoCego
 
-Atividade de Sistemas de Comunicação(Engenharia de Telecomunicações), onde foi proposto um projeto para fazer um jogo multiplayer usando JavaScript e protocolo de redes. 
+Projeto de Sistemas de Comunicações(Engenharia de Telecomunicações), onde foi proposto a implementação de um jogo multiplayer utilizando JavaScript e protocolo de redes. 
