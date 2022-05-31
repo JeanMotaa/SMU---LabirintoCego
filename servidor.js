@@ -10,6 +10,45 @@ var jogadores = {
   terceiro: undefined,
 };
 io.on("connection", function (socket) {
+    if (jogadores.primeiro === undefined) {
+    jogadores.primeiro = socket.id;
+  } else if (jogadores.segundo === undefined) {
+    jogadores.segundo = socket.id;
+  } else if (jogadores.terceiro === undefined) {
+    jogadores.terceiro = socket.id;
+  }
+  io.emit("jogadores", jogadores);
+  console.log("+Lista de jogadores: %s", jogadores);
+
+  // Sinalização de áudio: oferta
+  socket.on("offer", (socketId, description) => {
+    socket.to(socketId).emit("offer", socket.id, description);
+  });
+
+  // Sinalização de áudio: atendimento da oferta
+  socket.on("answer", (socketId, description) => {
+    socket.to(socketId).emit("answer", description);
+  });
+
+  // Sinalização de áudio: envio dos candidatos de caminho
+  //socket.on("candidate", (socketId, signal) => {
+  //  socket.to(socketId).emit("candidate", signal);
+  //});
+
+  // Disparar evento quando jogador sair da partida
+  socket.on("disconnect", function () {
+    if (jogadores.primeiro === socket.id) {
+      jogadores.primeiro = undefined;
+    }
+    if (jogadores.segundo === socket.id) {
+      jogadores.segundo = undefined;
+    }
+    if (jogadores.terceiro === socket.id) {
+      jogadores.terceiro = undefined;
+    }
+    io.emit("jogadores", jogadores);
+    console.log("-Lista de jogadores: %s", jogadores);
+  });
 });
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
