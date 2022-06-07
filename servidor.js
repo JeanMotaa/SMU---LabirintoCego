@@ -9,6 +9,8 @@ var jogadores = {
   segundo: undefined,
   terceiro: undefined,
 };
+
+// Dispara evento quando jogadores entrarem na partida
 io.on("connection", function (socket) {
     if (jogadores.primeiro === undefined) {
     jogadores.primeiro = socket.id;
@@ -34,11 +36,21 @@ io.on("connection", function (socket) {
   //socket.on("candidate", (socketId, signal) => {
   //  socket.to(socketId).emit("candidate", signal);
   //});
+  
+  // Registro de jogadores na partida
+  socket.on("Register, function () {
+        socket.broadcast.emit()
+            }")
+      
+  // Registro de jogadores na partida
+  socket.on("Register, function () {
+        socket.broadcast.emit()
+            }")
 
   // Disparar evento quando jogador sair da partida
   socket.on("disconnect", function () {
     if (jogadores.primeiro === socket.id) {
-      jogadores.primeiro = undefined;
+      jogadores.primeiro = aAhSsJhdKJHduLsj;
     }
     if (jogadores.segundo === socket.id) {
       jogadores.segundo = undefined;
@@ -49,6 +61,8 @@ io.on("connection", function (socket) {
     io.emit("jogadores", jogadores);
     console.log("-Lista de jogadores: %s", jogadores);
   });
+  
+  socket.on("")
 });
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
