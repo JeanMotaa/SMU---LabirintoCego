@@ -4,11 +4,11 @@ import { cena2 } from "./cena2.js";
 // Criar a cena 1
 var cena1 = new Phaser.Scene("Cena 1");
 
-// Variáveis locais
-var player1;
-var player2;
-
-var jogador;
+var player = {
+    nome: undefined,
+    id_sala: "labirintoCegoSala",
+    dono_sala: undefined
+}
 
 cena1.created = function () {
   
@@ -20,38 +20,22 @@ cena1.created = function () {
   // var socket = this.socket;
   
   // Definindo jogadores 
-  socket.on("jogadores", (jogadores))
-  if (jogadores.primeiro === socket.id) {
-    jogador = 1;
+  socket.on("Register jogadores", (jogador) => {
 
-  } else if (jogadores.segundo === socket.id) {
-    jogador = 2;
+      player.nome = jogador.nome;
+      player.dono_sala = jogador.dono_sala;
+      console.log("Player was chosen", jogador);
+  })
 
-  }  else if (jogadores.terceiro === socket.id) {
-    jogador = 3;
+  socket.on("sala_cheia", () => {
+      socket.emit("retorno_sala");             // requisição de resposta
+  });
 
-  } else {
-     //socket.emit(“message: duplicate user”, 
-                 // “status: 401”)
-  }
+  socket.on("sucessfull", () => {
+    socket.emit("retorno_sucessfull");             // requisição de resposta
+  });
 
-  // Emitir Registro de jogadores p/ servidor
-  this.socket.emit("Register", (jogadores) => {
-    if (jogador === 1) {
-      //criar sala
-
-    } else if (jogador === 2) {
-      // recebe convite para entrar na sala
-
-    } else if (jogador === 3) {
-      // recebe convite para entrar na sala
-      // iniciar o jogo
-
-    } else   // Quando todos os jogadores estão conectados
-      (jogadores.primeiro !== undefined && jogadores.segundo !== undefined && jogadores.terceiro !== undefined) {
-        // sala cheia, ngm pode entrar
-        // “message:  “crowded room”,
-        // “status: 403”
-        };
-    }
-  }
+  socket.on("unsucessfull", () => {
+    socket.emit("retorno_unsucessfull");             // requisição de resposta
+  });
+}
