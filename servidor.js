@@ -1,7 +1,14 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server);
+const io = require("socket.io")(server, {
+  cors: {
+    origins: [
+      "https://labirinto.ifsc.cloud",
+      "https://*.gitpod.io"
+    ],
+  },
+});
 const PORT = process.env.PORT || 3000;
 
 var jogadores = {
@@ -14,8 +21,10 @@ var jogadores = {
 io.on("connection", function (socket) {
     if (jogadores.primeiro === undefined) {
     jogadores.primeiro = socket.id;
+
   } else if (jogadores.segundo === undefined) {
     jogadores.segundo = socket.id;
+    
   } else if (jogadores.terceiro === undefined) {
     jogadores.terceiro = socket.id;
   }
@@ -32,25 +41,25 @@ io.on("connection", function (socket) {
     socket.to(socketId).emit("answer", description);
   });
 
-  // Sinalização de áudio: envio dos candidatos de caminho
-  //socket.on("candidate", (socketId, signal) => {
-  //  socket.to(socketId).emit("candidate", signal);
-  //});
+  //Sinalização de áudio: envio dos candidatos de caminho
+  socket.on("candidate", (socketId, signal) => {
+    socket.to(socketId).emit("candidate", signal);
+  });
   
   // Registro de jogadores na partida
-  socket.on("Register, function () {
-        socket.broadcast.emit()
-            }")
+  //socket.on("Register, function () {
+   //     socket.broadcast.emit()
+  //          }")
       
   // Registro de jogadores na partida
-  socket.on("Register, function () {
-        socket.broadcast.emit()
-            }")
+  //socket.on("Register, function () {
+  //      socket.broadcast.emit()
+  //          }")
 
   // Disparar evento quando jogador sair da partida
   socket.on("disconnect", function () {
     if (jogadores.primeiro === socket.id) {
-      jogadores.primeiro = aAhSsJhdKJHduLsj;
+      jogadores.primeiro = undefined;
     }
     if (jogadores.segundo === socket.id) {
       jogadores.segundo = undefined;
