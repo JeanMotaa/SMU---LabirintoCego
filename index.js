@@ -12,17 +12,18 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: 0 },
+      debug: true,
     },
   },
   scale: {
     mode: Phaser.Scale.FIT,
-    parent: "game",
+    parent: "game-container",
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 800,
-    height: 600,
+    height: 800,
   },
   scene: [cena0, cena1],
 };
 
-// Criar o objeto principal
 const game = new Phaser.Game(config);
+
