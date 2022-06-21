@@ -1,3 +1,4 @@
+// Criar a cena 1
 var cena1 = new Phaser.Scene("Cena 1");
 
 var socket;
@@ -29,6 +30,30 @@ cena1.create = function () {
 
   socket.on("sala_cheia", () => {
     socket.emit("retorno_sala"); // requisição de resposta
+  dono_sala: undefined
+}
+
+cena1.preload = function () { }
+
+cena1.create = function () {
+
+  // Conectar no servidor via WebSocket
+  socket = io();
+
+  // Disparar evento quando jogador entrar na partida
+  // var self = this;
+  // var socket = this.socket;
+
+  // Definindo jogadores 
+  socket.on("Register jogadores", (jogador) => {
+
+    player.nome = jogador.nome;
+    player.dono_sala = jogador.dono_sala;
+    console.log("Player was chosen", jogador);
+  })
+
+  socket.on("sala_cheia", () => {
+    socket.emit("retorno_sala");             // requisição de resposta
   });
 
   socket.on("sucessfull", () => {
@@ -43,3 +68,4 @@ cena1.create = function () {
 cena1.update = function () {};
 
 export { cena1 };
+
