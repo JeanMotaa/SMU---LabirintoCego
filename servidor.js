@@ -22,10 +22,9 @@ io.on("connection", (socket) => {
       socket.join(jogadores.primeiro.id_sala);
       io.to(sid).emit("register-ok", jogadores.primeiro);
       console.log(jogadores.primeiro);
-    }
-    if (jogadores.segundo === undefined) {
+    } else if (jogadores.segundo === undefined) {
       jogadores.segundo = {
-        nome: socket.id, // alterar pois está gerando o msm nome para primeiro e segundo
+        nome: sid, // alterar pois está gerando o msm nome para primeiro e segundo
         id_sala: "labirintoCegoSala",
         dono_sala: false,
       };
