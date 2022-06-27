@@ -1,7 +1,11 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server);
+const io = require("socket.io")(server {
+   cors: {
+    origins: ["https://cliente.ifsc.cloud", "https://*.gitpod.io"],
+  },
+});
 const PORT = process.env.PORT || 3000;
 
 var jogadores = {
@@ -22,12 +26,14 @@ io.on("connection", (socket) => {
       socket.join(jogadores.primeiro.id_sala);
       io.to(sid).emit("register-ok", jogadores.primeiro);
       console.log(jogadores.primeiro);
+
     } else if (jogadores.segundo === undefined) {
       jogadores.segundo = {
         nome: sid, // alterar pois está gerando o msm nome para primeiro e segundo
         id_sala: "labirintoCegoSala",
         dono_sala: false,
       };
+
       socket.join(jogadores.segundo.id_sala);
       io.to(sid).emit("register-ok", jogadores.segundo);
       console.log(jogadores.segundo);
