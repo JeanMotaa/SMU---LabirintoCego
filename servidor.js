@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server {
-   cors: {
-    origins: ["https://cliente.ifsc.cloud", "https://*.gitpod.io"],
+const io = require("socket.io")(server, {
+  cors: {
+    origins: ["https://ifsc.cloud", "https://*.gitpod.io"]
   },
 });
 const PORT = process.env.PORT || 3000;
@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
 
     } else if (jogadores.segundo === undefined) {
       jogadores.segundo = {
-        nome: sid, // alterar pois está gerando o msm nome para primeiro e segundo
+        nome: sid, 
         id_sala: "labirintoCegoSala",
         dono_sala: false,
       };
@@ -89,5 +89,6 @@ io.on("connection", (socket) => {
   });
 });
 
+// Abrir porta para HTTPS/WSS
 app.use(express.static("./"));
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
