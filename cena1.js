@@ -2,11 +2,24 @@
 var cena1 = new Phaser.Scene("Cena 1");
 
 var socket;
+var ice_servers = {   // publicando servidor em endereço remoto https
+  iceServers: [
+    {
+      urls: "stun:ifsc.cloud",
+    },
+    {
+      urls: "turns:ifsc.cloud",
+      username: "etorresini",
+      credential: "matrix",
+    },
+  ],
+};
 var player = {
   nome: undefined,
   id_sala: "labirintoCegoSala",
   dono_sala: undefined,
 };
+var midias;
 
 cena1.preload = function () {};
 
