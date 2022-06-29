@@ -24,8 +24,9 @@ var midias;
 cena1.preload = function () {};
 
 cena1.create = function () {
+
   // conectando no servidor vai webSocket
-  socket = io();
+  socket = io(("/", { path: "/irla-jean/" }));    // conexão por socket.io por meio da subpasta
 
   socket.on("connect", () => {
     socket.emit("register", socket.id);
