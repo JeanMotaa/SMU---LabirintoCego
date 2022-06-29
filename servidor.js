@@ -38,16 +38,7 @@ io.on("connection", (socket) => {
     }
     io.emit("jogadores", jogadores);
   });
-  //   jogadores.segundo = jogador;
-  //   // se jogador possui o acesso a sala, entra na partida
-  //   socket.join(jogador.id_sala);
-  // } else if (jogadores.terceiro === undefined) {
-  //   var jogador = {
-  //   nome: socket.id,
-  //   id_sala: "labirintoCegoSala",
-  //   dono_sala: false,
-  // };
-
+ 
   //   jogadores.terceiro = jogador;
   //   socket.join(jogador.id_sala);
   // } else {
@@ -72,6 +63,7 @@ io.on("connection", (socket) => {
     socket.to(socketId).emit("candidate", signal);
   });
 
+  // tratando erro de disconexão
   socket.on("disconnect", function () {
     if (jogadores.primeiro) {
       if (jogadores.primeiro.nome === socket.id) {
