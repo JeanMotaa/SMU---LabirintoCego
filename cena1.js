@@ -9,8 +9,8 @@ var ice_servers = {   // publicando servidor em endereço remoto https
     },
     {
       urls: "turns:ifsc.cloud",
-      username: "etorresini",
-      credential: "matrix",
+      username: "smu20221",
+      credential: "smu20221",
     },
   ],
 };
@@ -26,7 +26,8 @@ cena1.preload = function () {};
 cena1.create = function () {
 
   // conectando no servidor vai webSocket
-  socket = io(("/", { path: "/irla-jean/" }));    // conexão por socket.io por meio da subpasta
+  //socket = io(("/", { path: "/irla-jean/" }));    // conexão por socket.io por meio da subpasta
+  socket = io () 
 
   socket.on("connect", () => {
     socket.emit("register", socket.id);
@@ -37,48 +38,92 @@ cena1.create = function () {
     console.log("Player was chosen: ", jogador.nome);
   });
 
-  socket.on("register-nok", () => {});
+  socket.on("register-nok", () => { });
 
   socket.on("jogadores", (jogadores) => {
-    console.log(jogadores);
+    if (jogadores.primeiro == socket.id) {
+      // se primeiro jogador 
+      player = 1;
+      // então faz a requisição de troca de midia
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((stream) => {
+          midias = stream;
+        })
+        .catch((error) => console.log(error));
+      
+    } else if (jogadores.segundo === socket.id) {
+      player = 2;
+
+      // sinaliza uma oferta de mídia para primeiro jogador
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((stream) => {
+          midias = stream;
+          localConnection = new RTCPeerConnection(ice_servers);
+          midias
+            .getTracks()
+            .forEach((track) => localConnection.addTrack(track, midias));
+          localConnection.onicecandidate = ({ candidate }) => {
+            candidate && socket.emit("candidate", jogadores.primeiro, candidate);
+          };
+          console.log(midias);
+          localConnection.ontrack = ({ streams: [midias] }) => {
+            audio.srcObject = midias;
+          };
+          localConnection
+            .createOffer()
+            .then((offer) => localConnection.setLocalDescription(offer))
+            .then(() => {
+              socket.emit("offer", sala, localConnection.localDescription);
+            });
+        })
+        .catch((error) => console.log(error));
+    }
   });
+
+  console.log(jogadores);
 
   socket.on("sala_cheia", () => {
     socket.emit("retorno_sala"); // requisição de resposta
     dono_sala: undefined;
   });
 
+  // após a sala cheia, emitir um "offer" de mídia entre as pessoas que já estão dentro da sala
   // resposta a sinalização de oferta de mídia
-    socket.on("offer", (socketId, description) => {
-      remoteConnection = new RTCPeerConnection(ice_servers);
-      midias
-        .getTracks()
-        .forEach((track) => remoteConnection.addTrack(track, midias));
-      remoteConnection.onicecandidate = ({ candidate }) => {
-        candidate && socket.emit("candidate", socketId, candidate);
-      };
-      remoteConnection.ontrack = ({ streams: [midias] }) => {
-        audio.srcObject = midias;
-      };
-      remoteConnection
-        .setRemoteDescription(description)
-        .then(() => remoteConnection.createAnswer())
-        .then((answer) => remoteConnection.setLocalDescription(answer))
-        .then(() => {
-          socket.emit("answer", socketId, remoteConnection.localDescription);
-        });
-    });
+  // about:webrtc para visualizar melhor a troca de mensagens
 
-    socket.on("answer", (description) => {
-      localConnection.setRemoteDescription(description);
-    });
+  // resposta a offer de midia
+  socket.on("offer", (socketId, description) => {
+    remoteConnection = new RTCPeerConnection(ice_servers);
+    midias
+      .getTracks()
+      .forEach((track) => remoteConnection.addTrack(track, midias));
+    remoteConnection.onicecandidate = ({ candidate }) => {
+      candidate && socket.emit("candidate", socketId, candidate);
+    };
+    remoteConnection.ontrack = ({ streams: [midias] }) => {
+      audio.srcObject = midias;
+    };
+    remoteConnection
+      .setRemoteDescription(description)
+      .then(() => remoteConnection.createAnswer())
+      .then((answer) => remoteConnection.setLocalDescription(answer))
+      .then(() => {
+        socket.emit("answer", socketId, remoteConnection.localDescription);
+      });
+  });
 
-    socket.on("candidate", (candidate) => {
-      const conn = localConnection || remoteConnection;
-      conn.addIceCandidate(new RTCIceCandidate(candidate));
-    });
+  socket.on("answer", (description) => {
+    localConnection.setRemoteDescription(description);
+  });
+
+  socket.on("candidate", (candidate) => {
+    const conn = localConnection || remoteConnection;
+    conn.addIceCandidate(new RTCIceCandidate(candidate));
+  });
 };
 
 cena1.update = function () {};
 
-export { cena1 };
+  export { cena1 };
