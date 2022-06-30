@@ -35,6 +35,8 @@ io.on("connection", (socket) => {
       socket.join(jogadores.segundo.id_sala);
       socket.emit("register-ok", jogadores.segundo);
       console.log(jogadores.segundo);
+    } else {
+      socket.emit("register-nok")
     }
     io.emit("jogadores", jogadores);
   });
