@@ -2,7 +2,8 @@
 var cena1 = new Phaser.Scene("Cena 1");
 
 var socket;
-var ice_servers = {   // publicando servidor em endereço remoto https
+var ice_servers = {
+  // publicando servidor em endereço remoto https
   iceServers: [
     {
       urls: "stun:ifsc.cloud",
@@ -20,14 +21,16 @@ var player = {
   dono_sala: undefined,
 };
 var midias;
+var localConnection;
+var remoteConnection;
+const audio = document.querySelector("audio");
 
 cena1.preload = function () {};
 
 cena1.create = function () {
-
-  // conectando no servidor vai webSocket
+  // conectando no servidor via webSocket
   //socket = io(("/", { path: "/irla-jean/" }));    // conexão por socket.io por meio da subpasta
-  socket = io () 
+  socket = io();
 
   socket.on("connect", () => {
     socket.emit("register", socket.id);
@@ -38,11 +41,11 @@ cena1.create = function () {
     console.log("Player was chosen: ", jogador.nome);
   });
 
-  socket.on("register-nok", () => { });
+  socket.on("register-nok", () => {});
 
   socket.on("jogadores", (jogadores) => {
-    if (jogadores.primeiro == socket.id) {
-      // se primeiro jogador 
+    if (jogadores.primeiro.nome == socket.id) {
+      // primeiro jogador
       player = 1;
       // então faz a requisição de troca de midia
       navigator.mediaDevices
@@ -51,8 +54,7 @@ cena1.create = function () {
           midias = stream;
         })
         .catch((error) => console.log(error));
-      
-    } else if (jogadores.segundo === socket.id) {
+    } else if (jogadores.segundo.nome === socket.id) {
       player = 2;
 
       // sinaliza uma oferta de mídia para primeiro jogador
@@ -65,7 +67,8 @@ cena1.create = function () {
             .getTracks()
             .forEach((track) => localConnection.addTrack(track, midias));
           localConnection.onicecandidate = ({ candidate }) => {
-            candidate && socket.emit("candidate", jogadores.primeiro, candidate);
+            candidate &&
+              socket.emit("candidate", jogadores.primeiro.nome, candidate);
           };
           console.log(midias);
           localConnection.ontrack = ({ streams: [midias] }) => {
@@ -75,14 +78,18 @@ cena1.create = function () {
             .createOffer()
             .then((offer) => localConnection.setLocalDescription(offer))
             .then(() => {
-              socket.emit("offer", sala, localConnection.localDescription);
+              socket.emit(
+                "offer",
+                jogadores.primeiro.nome,
+                localConnection.localDescription
+              );
             });
         })
         .catch((error) => console.log(error));
     }
-  });
 
-  console.log(jogadores);
+    console.log(jogadores);
+  });
 
   socket.on("sala_cheia", () => {
     socket.emit("retorno_sala"); // requisição de resposta
@@ -126,4 +133,4 @@ cena1.create = function () {
 
 cena1.update = function () {};
 
-  export { cena1 };
+export { cena1 };

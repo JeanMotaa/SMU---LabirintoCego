@@ -40,15 +40,6 @@ io.on("connection", (socket) => {
     }
     io.emit("jogadores", jogadores);
   });
- 
-  //   jogadores.terceiro = jogador;
-  //   socket.join(jogador.id_sala);
-  // } else {
-  //   io.emit("sala_cheia");
-  // }
-
-  // io.emit("jogadores", jogadores);
-  //});
 
   // Sinalização de áudio: oferta
   socket.on("offer", (socketId, description) => {
@@ -65,7 +56,7 @@ io.on("connection", (socket) => {
     socket.to(socketId).emit("candidate", signal);
   });
 
-  // tratando erro de disconexão
+  // tratando erro de desconexão
   socket.on("disconnect", function () {
     if (jogadores.primeiro) {
       if (jogadores.primeiro.nome === socket.id) {
