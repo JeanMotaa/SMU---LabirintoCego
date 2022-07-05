@@ -29,8 +29,8 @@ cena1.preload = function () {};
 
 cena1.create = function () {
   // conectando no servidor via webSocket
-  socket = io(("/", { path: "/irla-jean/" }));    // conexão por socket.io por meio da subpasta
-  socket = io();
+  socket = io(("/", { path: "/irla-jean/" })); // conexão por socket.io por meio da subpasta
+  //socket = io();
 
   socket.on("connect", () => {
     socket.emit("register", socket.id);
